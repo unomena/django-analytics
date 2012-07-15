@@ -89,7 +89,7 @@ def geckoboard_number_widget(request):
     """
     Returns a number widget for the specified metric's cumulative total.
     """
-
+    
     params = get_gecko_params(request, days_back=7)
     metric = Metric.objects.get(uid=params['uid'])
     try:
@@ -103,7 +103,6 @@ def geckoboard_number_widget(request):
     except IndexError:
         # if there is no previous stat
         return (latest_stat.cumulative_count, 0) if params['cumulative'] else (latest_stat.count, 0)
-
     return (latest_stat.cumulative_count, prev_stat.cumulative_count) if params['cumulative'] else (latest_stat.count, prev_stat.count)
 
 
@@ -162,16 +161,17 @@ def geckoboard_line_chart(request):
     if len(stats) == 0:
         raise Exception, _("No statistics for metric %(metric)s.") % {'metric': params['uid']}
 
-    dates = [stats[0].date_time]
+    dates = [datetime.strftime(stats[0].date_time, '%Y-%m-%d')]
 
     # get up to 3 dates from the stats
     if len(stats) >= 3:
         mid = len(stats)/2
         if not mid:
             mid = 1
-        dates.extend([stats[mid].date_time, stats[-1].date_time])
+        dates.extend([datetime.strftime(stats[mid].date_time, '%Y-%m-%d'), 
+                      datetime.strftime(stats[-1].date_time, '%Y-%m-%d')])
     elif len(stats) == 2:
-        dates.extend([stats[-1].date_time])
+        dates.extend([datetime.strftime(stats[-1].date_time, '%Y-%m-%d')])
 
     return (
         [s.count for s in stats],

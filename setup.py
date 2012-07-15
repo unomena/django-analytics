@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-analytics',
-    version='0.0.1',
+    version='0.0.2',
     description='Django app facilitating tracking of arbitrary simple metrics.',
     long_description=open('README.rst', 'rt').read(),
     author='Praekelt Foundation',
