@@ -157,6 +157,14 @@ def geckoboard_line_chart(request):
     start_date = datetime.now()-timedelta(days=params['days_back'])
     stats = [s for s in metric.statistics.filter(frequency=params['frequency'],
         date_time__gte=start_date).order_by('date_time')]
+    
+    max_value = min_value = 0
+    
+    for stat in stats:
+        if stat.count > max_value:
+            max_value = stat.count
+        elif stat.count < min_value:
+            min_value = stat.count
 
     if len(stats) == 0:
         raise Exception, _("No statistics for metric %(metric)s.") % {'metric': params['uid']}
@@ -176,7 +184,7 @@ def geckoboard_line_chart(request):
     return (
         [s.count for s in stats],
         dates,
-        metric.title,
+        [min_value, (max_value + min_value) / 2, max_value],
     )
 
 
